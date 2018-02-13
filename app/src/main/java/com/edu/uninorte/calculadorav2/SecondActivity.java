@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,15 +25,18 @@ public class SecondActivity extends AppCompatActivity {
     String operation;
     private String temporal = "";
     private String nuevaOperacion ;
+
+    private String[] operacionVector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         main = (LinearLayout) findViewById(R.id.mainLayout);
         count = 0;
-        nuevaOperacion ="";
         Intent intent = getIntent();
         operation =(String) intent.getStringExtra("operaciones");
+        nuevaOperacion=operation;
+        operacionVector = new String[operation.length()];
         generarLayout();
     }
 
@@ -41,14 +45,30 @@ public class SecondActivity extends AppCompatActivity {
         for (int i=0; i<=operation.length()-1;i++){
             LinearLayout newLayout = new LinearLayout(this);
             newLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+            //PARAMETROS DEL LINEAR LAYOUT
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            //params.weight = 1.0f;
+            params.gravity = Gravity.LEFT;
+
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            params.weight = 1.0f;
+            params.gravity = Gravity.RIGHT;
+            //
+
             final TextView numberText = new TextView(this);
             numberText.setId(i);
-            numberText.setText(operation.substring(i,i+1));
+            numberText.setText(" "+operation.substring(i,i+1));
+            numberText.setTextSize(30.0f);
+            numberText.setLayoutParams(params);
 
             Button bt = new Button(this);
             bt.setText("Edit "+operation.substring(i,i+1));
             bt.setTag(operation.substring(i,i+1));
+            bt.setLayoutParams(params2);
+            operacionVector[i]=operation.substring(i,i+1);
 
+            final int finalI = i;
             bt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -58,6 +78,7 @@ public class SecondActivity extends AppCompatActivity {
                     builder.setTitle("Cambiar termino");
                     // Set up the input
                     final EditText input = new EditText(view.getContext());
+
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                     input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_VARIATION_NORMAL);
                     builder.setView(input);
@@ -67,7 +88,13 @@ public class SecondActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             temporal = input.getText().toString();
                             numberText.setText(temporal.toString());
-                            nuevaOperacion+=numberText.getText().toString();
+                            operacionVector[finalI]=numberText.getText().toString();
+                            nuevaOperacion = "";
+                            for (int j=0; j<operacionVector.length;j++){
+                                nuevaOperacion+=operacionVector[j];
+                            }
+
+                           // nuevaOperacion+=numberText.getText().toString();
 
                             //operation=changeCharInPosition(count,(char)numberText.getText(),operation);
                         }
@@ -75,7 +102,7 @@ public class SecondActivity extends AppCompatActivity {
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            nuevaOperacion+=numberText.getText().toString();
+                            //nuevaOperacion+=numberText.getText().toString();
                             dialog.cancel();
                         }
                     });
@@ -84,7 +111,7 @@ public class SecondActivity extends AppCompatActivity {
 
                 }
             });
-            nuevaOperacion += numberText.getText().toString();
+            //nuevaOperacion += numberText.getText().toString();
             newLayout.addView(numberText);
 
             newLayout.addView(bt);

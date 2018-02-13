@@ -213,13 +213,14 @@ public class MainActivity extends AppCompatActivity {
             if ( resultCode == RESULT_OK){
 
                 String operacion=(String) data.getStringExtra("operaciones");
+                op=operacion;
                 Toast toast = Toast.makeText(this, operacion, Toast.LENGTH_SHORT);
                 toast.show();
-                operation.setText(" ");
-                operation.setText(operacion);
+                //operation.setText(" ");
+                operation.setText(op);
                 resultado.setText(" ");
                 resultado.setText(eval(op)+"");
-                op=" ";
+                op="";
                 operation.setText(" ");
             }
         }
