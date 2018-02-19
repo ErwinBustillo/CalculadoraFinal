@@ -22,20 +22,21 @@ public class MainActivity extends AppCompatActivity {
         resultado = (TextView) findViewById(R.id.textResultado);
         operation =(EditText) findViewById(R.id.editText);
 
-        /*TextView tt = (TextView)findViewById(R.id.toptext);
-        tt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                EditText et = (EditText)findViewById(R.id.theIdOfYourEditText);
-                EditText et2 = (EditText)findViewById(R.id.theIdOfYourOtherEditText);
-                et.setText("");
-                et2.setText("");
-            }
-        });*/
+        if (savedInstanceState == null){
+           // op=null;
+        }
+        else{
+            op=savedInstanceState.getString("operaciones");
+        }
     }
 
-        // ESTA FUNCION SIRVE PARA EVALUAR EXPRESIONES ARITMETICAS SOBRE STRING REFERENCIA(https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form)
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("operaciones",op);
+        super.onSaveInstanceState(outState);
+    }
+
+    // ESTA FUNCION SIRVE PARA EVALUAR EXPRESIONES ARITMETICAS SOBRE STRING REFERENCIA(https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form)
         public static double eval(final String str) {
             return new Object() {
                 int pos = -1, ch;
@@ -173,9 +174,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBotonIgual(View view) {
-        //Resolver aqui con la funcion eval
-        if (op.equals("")){//SI se quiere escribir desde el Input inicial
-            op=operation.getText().toString();
+
+        if (op.equals("")){
+            return;
         }
         resultado.setText(eval(op)+"");
         op="";
@@ -183,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBotonDel(View view) {
+        if (op.equals("")){
+            return;
+        }
         op=op.substring(0,op.length()-1);
         operation.setText(op);
     }
@@ -227,8 +231,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickEditTextOperation(View view) {
-        //Toast toast = Toast.makeText(this, "ME ACCIONE", Toast.LENGTH_SHORT);
-        //toast.show();
+
+        if(op.equals("")){
+            Toast toast = Toast.makeText(this, "Por favor digite una operacion para continuar", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
         Intent intent = new Intent(this,SecondActivity.class);
         intent.putExtra("operaciones",op);// guardo el conjunto de operaciones
         startActivityForResult(intent,1);
@@ -236,7 +244,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onclickMainConst(View view) {
-
+        if (op.equals("")){
+            Toast toast = Toast.makeText(this, "Por favor digite una operacion para continuar", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
         Intent intent = new Intent(this,SecondActivity.class);
         intent.putExtra("operaciones",op);// guardo el conjunto de operaciones
         startActivityForResult(intent,1);

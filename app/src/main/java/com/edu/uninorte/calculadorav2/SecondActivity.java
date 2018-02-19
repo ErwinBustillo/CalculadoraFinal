@@ -3,10 +3,13 @@ package com.edu.uninorte.calculadorav2;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -34,10 +37,22 @@ public class SecondActivity extends AppCompatActivity {
         main = (LinearLayout) findViewById(R.id.mainLayout);
         count = 0;
         Intent intent = getIntent();
-        operation =(String) intent.getStringExtra("operaciones");
+        if (savedInstanceState == null){
+            operation =(String) intent.getStringExtra("operaciones");
+        }
+        else{
+            operation=savedInstanceState.getString("operaciones");
+        }
+
         nuevaOperacion=operation;
         operacionVector = new String[operation.length()];
         generarLayout();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("operaciones",nuevaOperacion);
+        super.onSaveInstanceState(outState);
     }
 
     public void generarLayout(){
@@ -61,10 +76,14 @@ public class SecondActivity extends AppCompatActivity {
             numberText.setText(" "+operation.substring(i,i+1));
             numberText.setTextSize(30.0f);
             numberText.setLayoutParams(params);
+            numberText.setTextColor(Color.BLACK);
+
 
             Button bt = new Button(this);
             bt.setText("Edit "+operation.substring(i,i+1));
             bt.setTag(operation.substring(i,i+1));
+            bt.setBackgroundResource(R.drawable.button_style);
+            bt.setTextColor(Color.WHITE);
             bt.setLayoutParams(params2);
             operacionVector[i]=operation.substring(i,i+1);
 
@@ -76,6 +95,7 @@ public class SecondActivity extends AppCompatActivity {
                     //EditText e = (EditText) view.findViewById(id);
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     builder.setTitle("Cambiar termino");
+                    builder.setIcon(R.mipmap.ic_launcher);
                     // Set up the input
                     final EditText input = new EditText(view.getContext());
 
@@ -111,11 +131,9 @@ public class SecondActivity extends AppCompatActivity {
 
                 }
             });
-            //nuevaOperacion += numberText.getText().toString();
+
             newLayout.addView(numberText);
-
             newLayout.addView(bt);
-
             main.addView(newLayout);
             count ++;
         }
@@ -123,12 +141,13 @@ public class SecondActivity extends AppCompatActivity {
         Button buttonGoBack = new Button(this);
         buttonGoBack.setText("Go Back ");
         buttonGoBack.setTag(count+1);
+        buttonGoBack.setBackgroundResource(R.drawable.button_style);
+        buttonGoBack.setTextColor(Color.WHITE);
         main.addView(buttonGoBack);
         buttonGoBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast toastResult = Toast.makeText(view.getContext(), operation, Toast.LENGTH_SHORT);
-                //toastResult.show();
+
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("operaciones",nuevaOperacion);
                 setResult(Activity.RESULT_OK,returnIntent);
